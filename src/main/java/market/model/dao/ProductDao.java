@@ -8,32 +8,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ProductDao {
+public class ProductDao extends BaseDao {
     private Connection connection;
 
     public ProductDao(Connection connection) {
-        this.connection = connection;
-    }
-
-    public void listAll() throws SQLException {
-        String sql = "SELECT id, name, price FROM product";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.execute();
-        ResultSet resultSet = statement.getResultSet();
-        while (resultSet.next()) {
-            System.out.println(resultSet.getInt("id") + " - " + resultSet.getString("name") + " - " + resultSet.getDouble("price"));
-        }
-    }
-
-    public void listById(int id) throws SQLException {
-        String sql = "SELECT id, name, price FROM product WHERE id = ?";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setInt(1, id);
-        statement.execute();
-        ResultSet resultSet = statement.getResultSet();
-        while (resultSet.next()) {
-            System.out.println(resultSet.getInt("id") + " - " + resultSet.getString("name") + " - " + resultSet.getDouble("price"));
-        }
+        super(connection);
+        this.tableName = "product";
+        this.idName = "id";
     }
 
     public boolean create(Product product) {
@@ -51,29 +32,6 @@ public class ProductDao {
             return false;
         }
         System.out.println("Produto inserido com sucesso.");
-        return true;
-    }
-
-    public boolean delete(int id) {
-        PreparedStatement statement = null;
-        try {
-            String sql = "DELETE FROM product WHERE id = ?";
-            statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
-            int updateCount = statement.getUpdateCount();
-            if (updateCount == 1) {
-                System.out.println("Produto excluído com sucesso.");
-            }
-            if (updateCount == 0) {
-                System.out.println("Produto não encontrado. Nenhum produto excluído.");
-                return false;
-            }
-            connection.commit();
-        } catch (SQLException e) {
-            System.out.println("Erro ao excluir produto. Causado por: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
         return true;
     }
 }

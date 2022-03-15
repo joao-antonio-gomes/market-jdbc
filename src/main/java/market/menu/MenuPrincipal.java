@@ -1,13 +1,14 @@
 package market.menu;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class MenuPrincipal extends Menu {
     public MenuPrincipal(Connection connection) {
         super(connection);
     }
 
-    public void menu() {
+    public void menu() throws SQLException {
         Menu.limpaMenu();
         System.out.println("Qual menu deseja acessar?");
         System.out.println("1 - Menu de Clientes");

@@ -4,13 +4,18 @@ import market.model.dao.ProductDao;
 import market.model.entities.Product;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class MenuProduto extends Menu {
+    private ProductDao productDao;
+
     public MenuProduto(Connection connection) {
         super(connection);
+        this.productDao = new ProductDao(connection);
     }
 
-    public void menu() {
+    public void menu() throws SQLException {
         limpaMenu();
         System.out.println("Qual operação deseja realizar?");
         System.out.println("1 - Cadastrar produto");
@@ -24,7 +29,7 @@ public class MenuProduto extends Menu {
         escolheOpcao(opcao);
     }
 
-    private void escolheOpcao(int opcao) {
+    private void escolheOpcao(int opcao) throws SQLException {
         switch (opcao) {
             case 1:
                 cadastrarProduto();
@@ -44,16 +49,38 @@ public class MenuProduto extends Menu {
         }
     }
 
-    private void excluirProduto() {
+    private void excluirProduto() throws SQLException {
+        System.out.println("Digite o ID do produto que deseja excluir:");
+        int id = scanner.nextInt();
+        productDao.deleteById(id);
+        System.out.println("Pressione ENTER para voltar ao menu principal...");
+        scanner.next();
+        (new MenuPrincipal(this.connection)).menu();
     }
 
-    private void listarProdutoPorId() {
+    private void listarProdutoPorId() throws SQLException {
+        System.out.println("Digite o ID do produto:");
+        int id = scanner.nextInt();
+        ResultSet resultSet = productDao.listById(id);
+        while (resultSet.next()) {
+            System.out.println(resultSet.getInt("id") + " - " + resultSet.getString("name") + " - " + resultSet.getDouble("price"));
+        }
+        System.out.println("Pressione ENTER para voltar ao menu principal...");
+        scanner.next();
+        (new MenuPrincipal(this.connection)).menu();
     }
 
-    private void listarProdutos() {
+    private void listarProdutos() throws SQLException {
+        ResultSet resultSet = productDao.listAll();
+        while (resultSet.next()) {
+            System.out.println(resultSet.getInt("id") + " - " + resultSet.getString("name") + " - " + resultSet.getDouble("price"));
+        }
+        System.out.println("Pressione ENTER para voltar ao menu principal...");
+        scanner.next();
+        (new MenuPrincipal(this.connection)).menu();
     }
 
-    private void cadastrarProduto() {
+    private void cadastrarProduto() throws SQLException {
         System.out.println("Digite o nome do produto:");
         scanner.nextLine();
         String nome = scanner.nextLine();
@@ -61,9 +88,7 @@ public class MenuProduto extends Menu {
         double preco = scanner.nextDouble();
 
         Product product = new Product(nome, preco);
-        ProductDao productDao = new ProductDao(this.connection);
         productDao.create(product);
-        System.out.println("Produto cadastrado com sucesso!");
         System.out.println("Produto: " + product.getName() + " - Preço: " + product.getPrice());
         System.out.println("Pressione ENTER para voltar ao menu principal...");
         scanner.next();
