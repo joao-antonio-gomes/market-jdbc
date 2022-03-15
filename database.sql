@@ -9,7 +9,7 @@ create table if not exists customer
 create table if not exists product
 (
     id    serial primary key,
-    name  varchar(255)   not null unique,
+    name  varchar(255)   not null,
     price numeric(10, 2) not null
 );
 
