@@ -6,6 +6,7 @@ import market.model.dao.ProductDao;
 import market.model.entities.Customer;
 import market.model.entities.Product;
 
+import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,6 +25,7 @@ public class MenuCliente extends Menu {
         System.out.println("2 - Listar clientes");
         System.out.println("3 - Listar cliente por ID");
         System.out.println("4 - Excluir cliente");
+        System.out.println("5 - Listar clientes que possuem vendas");
         System.out.println("0 - Voltar para o menu principal");
 
         int opcao = scanner.nextInt();
@@ -45,6 +47,9 @@ public class MenuCliente extends Menu {
             case 4:
                 excluirCliente();
                 break;
+            case 5:
+                listarClientesComPedidos();
+                break;
             case 0:
                 new MenuPrincipal().menu();
                 break;
@@ -52,6 +57,18 @@ public class MenuCliente extends Menu {
                 System.out.println("Opção inválida");
                 menu();
         }
+    }
+
+    private void listarClientesComPedidos() throws SQLException {
+        ResultSet resultSet = customerDao.getClientesComPedidos();
+        while (resultSet.next()) {
+            separador();
+            System.out.println("Nome: " + resultSet.getString("name") + " CPF: " + resultSet.getString("cpf") + " Telefone: " + resultSet.getString("cellphone"));
+        }
+        System.out.println("Pressione ENTER para voltar ao menu principal...");
+        scanner.nextLine();
+        scanner.nextLine();
+        new MenuPrincipal().menu();
     }
 
     private void excluirCliente() throws SQLException {

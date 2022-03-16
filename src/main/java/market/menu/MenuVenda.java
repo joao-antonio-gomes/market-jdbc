@@ -126,6 +126,4 @@ public class MenuVenda extends Menu {
         scanner.nextLine();
         new MenuPrincipal().menu();
     }
-
-
 }

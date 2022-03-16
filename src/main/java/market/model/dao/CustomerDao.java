@@ -4,6 +4,7 @@ import market.model.entities.Customer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CustomerDao extends BaseDao {
@@ -31,5 +32,20 @@ public class CustomerDao extends BaseDao {
         }
         System.out.println("Cliente cadastrado com sucesso.");
         return true;
+    }
+
+    public ResultSet getClientesComPedidos() {
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            String sql = "SELECT c.id, c.name, c.cellphone, c.cpf FROM customer c " +
+                    "JOIN \"order\" o ON c.id = o.customer_id GROUP BY c.id";
+            statement = connection.prepareStatement(sql);
+            resultSet = statement.executeQuery();
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar clientes com pedidos. Causado por: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return resultSet;
     }
 }
