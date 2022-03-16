@@ -7,10 +7,6 @@ import java.util.Scanner;
 
 abstract public class Menu {
     protected static Scanner scanner = new Scanner(System.in);
-    public Menu(Connection connection) {
-        this.connection = connection;
-    }
-    protected Connection connection;
 
     protected static void limpaMenu() {
         for (int i = 0; i < 50; i++) {

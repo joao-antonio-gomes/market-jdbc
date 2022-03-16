@@ -5,19 +5,31 @@ import java.time.LocalDate;
 public class Order {
     private long id;
     private long userId;
+    private long productId;
+
+    public long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(long productId) {
+        this.productId = productId;
+    }
+
     private LocalDate date;
 
     public Order() {
     }
 
-    public Order(long userId, LocalDate date) {
+    public Order(long userId, long productId) {
         this.userId = userId;
-        this.date = date;
+        this.productId = productId;
+        this.date = LocalDate.now();
     }
 
-    public Order(long id, long userId, LocalDate date) {
+    public Order(long id, long userId, long productId, LocalDate date) {
         this.id = id;
         this.userId = userId;
+        this.productId = productId;
         this.date = date;
     }
 

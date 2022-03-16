@@ -14,7 +14,7 @@ public class MarketApp {
 
             connection.setAutoCommit(false);
 
-            (new MenuPrincipal(connection)).menu();
+            (new MenuPrincipal()).menu();
 
             connectionFactory.closeConnection(connection);
         } catch (SQLException e) {

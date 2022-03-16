@@ -17,18 +17,10 @@ create table if not exists "order"
 (
     id          serial primary key,
     customer_id  integer not null references customer (id),
+    product_id   integer not null references product (id),
     order_date date    not null
-);
-
-create table if not exists products_order
-(
-    id         serial primary key,
-    order_id  integer not null references "order" (id),
-    product_id integer not null references product (id),
-    amount integer not null
 );
 
 insert into customer (name, cellphone, cpf) values ('João', '11999999999', '12345678901');
 insert into product (name, price) values ('Banana', 2.50);
-insert into "order" (customer_id, order_date) values (1, '2020-01-01');
-insert into products_order (order_id, product_id, amount) values (1, 1, 1);
+insert into "order" (customer_id, product_id, order_date) values (1, 1, '2020-01-01');

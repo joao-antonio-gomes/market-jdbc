@@ -15,14 +15,14 @@ abstract public class BaseDao {
     }
 
     public ResultSet listAll() throws SQLException {
-        String sql = "SELECT * FROM " + this.tableName;
+        String sql = String.format("SELECT * FROM \"%s\"", this.tableName);
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.execute();
         return statement.getResultSet();
     }
 
     public ResultSet listById(int id) throws SQLException {
-        String sql = "SELECT * FROM " + this.tableName + " WHERE id = ?";
+        String sql = String.format("SELECT * FROM \"%s\" WHERE \"%s\" = ?", this.tableName, this.idName);
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, id);
         statement.execute();
@@ -32,7 +32,7 @@ abstract public class BaseDao {
     public void deleteById(int id) {
         PreparedStatement statement = null;
         try {
-            String sql = "DELETE FROM " + this.tableName + " WHERE " + this.idName + " = ?";
+            String sql = String.format("DELETE FROM \"%s\" WHERE \"%s\" = ?", this.tableName, this.idName);
             statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             int updateCount = statement.getUpdateCount();

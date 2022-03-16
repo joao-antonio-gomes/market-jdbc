@@ -1,17 +1,21 @@
 package market.menu;
 
+import market.connection.ConnectionFactory;
 import market.model.dao.CustomerDao;
 import market.model.dao.OrderDao;
+import market.model.dao.ProductDao;
+import market.model.entities.Customer;
+import market.model.entities.Order;
+import market.model.entities.Product;
 
-import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MenuVenda extends Menu {
     private OrderDao orderDao;
 
-    public MenuVenda(Connection connection) {
-        super(connection);
-        this.orderDao = new OrderDao(connection);
+    public MenuVenda() throws SQLException {
+        this.orderDao = new OrderDao(new ConnectionFactory().openConnection());
     }
 
     public void menu() throws SQLException {
@@ -43,7 +47,7 @@ public class MenuVenda extends Menu {
                 excluiVenda();
                 break;
             case 0:
-                (new MenuPrincipal(this.connection)).menu();
+                new MenuPrincipal().menu();
                 break;
             default:
                 System.out.println("Opção inválida!");
@@ -51,20 +55,76 @@ public class MenuVenda extends Menu {
         }
     }
 
-    private void menuPrincipal() {
+    private void excluiVenda() throws SQLException {
+        System.out.println("Digite o ID da venda: ");
+        int id = scanner.nextInt();
+        orderDao.deleteById(id);
+        System.out.println("Venda excluida com sucesso!");
+        System.out.println("Voltando para o menu principal, aperte ENTER para continuar...");
+        scanner.nextLine();
+        new MenuPrincipal().menu();
     }
 
-    private void excluiVenda() {
+    private void listaVendas() throws SQLException {
+        System.out.println("Listando vendas...");
+        ResultSet resultSet = orderDao.listAll();
+        while (resultSet.next()) {
+            System.out.println("ID: " + resultSet.getInt("id") + " Cliente: " + resultSet.getString("customer_id") +
+                    " Produto: " + resultSet.getString("product_id") + "Data: " + resultSet.getString("order_date"));
+        }
+        System.out.println("Voltando para o menu principal, aperte ENTER para continuar...");
+        scanner.nextLine();
+        scanner.nextLine();
+        new MenuPrincipal().menu();
     }
 
-    private void listaVendas() {
+    private void listaVendaPorId() throws SQLException {
+        System.out.println("Digite o ID da venda: ");
+        int id = scanner.nextInt();
+        ResultSet resultSetOrder = orderDao.listById(id);
+
+        while (resultSetOrder.next()) {
+
+            ResultSet resultSetProduct = new ProductDao(new ConnectionFactory().openConnection()).listById(id);
+            ResultSet resultSetCustomer = new CustomerDao(new ConnectionFactory().openConnection()).listById(id);
+
+            while (resultSetProduct.next()) {
+                System.out.println("ID: " + resultSetProduct.getInt("id") + " Nome: " + resultSetProduct.getString("name") + " Preço: " + resultSetProduct.getDouble("price"));
+            }
+            while (resultSetCustomer.next()) {
+                System.out.println("ID: " + resultSetCustomer.getInt("id") + " Nome: " + resultSetCustomer.getString("name") + " CPF: " + resultSetCustomer.getString("cpf"));
+            }
+        }
+        
+        System.out.println("Voltando para o menu principal, aperte ENTER para continuar...");
+        scanner.nextLine();
+        new MenuPrincipal().menu();
     }
 
-    private void listaVendaPorId() {
-    }
+    private void cadastraVenda() throws SQLException {
+        System.out.println("Digite o ID do cliente: ");
+        int idCustomer = scanner.nextInt();
+        System.out.println("Digite o ID do produto: ");
+        int idProduct = scanner.nextInt();
 
-    private void cadastraVenda() {
-
+        ResultSet resultSetProduct = new ProductDao(new ConnectionFactory().openConnection()).listById(idProduct);
+        ResultSet resultSetCustomer = new CustomerDao(new ConnectionFactory().openConnection()).listById(idCustomer);
+        while (resultSetProduct.next()) {
+            System.out.println("ID: " + resultSetProduct.getInt("id") + " Nome: " + resultSetProduct.getString("name") + " Preço: " + resultSetProduct.getDouble("price"));
+        }
+        while (resultSetCustomer.next()) {
+            System.out.println("ID: " + resultSetCustomer.getInt("id") + " Nome: " + resultSetCustomer.getString("name") + " CPF: " + resultSetCustomer.getString("cpf"));
+        }
+        System.out.println("Confirma o cadastro da venda? (S/N)");
+        String confirma = scanner.next();
+        if (confirma.equalsIgnoreCase("S")) {
+            new Order(idCustomer, idProduct);
+            orderDao.create(new Order(idCustomer, idProduct));
+            System.out.println("Venda cadastrada com sucesso!");
+        }
+        System.out.println("Voltando para o menu principal, aperte ENTER para continuar...");
+        scanner.nextLine();
+        new MenuPrincipal().menu();
     }
 
 

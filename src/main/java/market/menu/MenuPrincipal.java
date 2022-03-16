@@ -1,12 +1,11 @@
 package market.menu;
 
+import market.connection.ConnectionFactory;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MenuPrincipal extends Menu {
-    public MenuPrincipal(Connection connection) {
-        super(connection);
-    }
 
     public void menu() throws SQLException {
         Menu.limpaMenu();
@@ -19,13 +18,13 @@ public class MenuPrincipal extends Menu {
         int opcao = scanner.nextInt();
         switch (opcao) {
             case 1:
-                (new MenuCliente(this.connection)).menu();
+                new MenuCliente().menu();
                 break;
             case 2:
-                (new MenuProduto(this.connection)).menu();
+                new MenuProduto().menu();
                 break;
             case 3:
-                (new MenuVenda(this.connection)).menu();
+                new MenuVenda().menu();
                 break;
             case 0:
                 System.out.println("Saindo...");

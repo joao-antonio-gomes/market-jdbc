@@ -1,5 +1,6 @@
 package market.menu;
 
+import market.connection.ConnectionFactory;
 import market.model.dao.ProductDao;
 import market.model.entities.Product;
 
@@ -10,9 +11,8 @@ import java.sql.SQLException;
 public class MenuProduto extends Menu {
     private ProductDao productDao;
 
-    public MenuProduto(Connection connection) {
-        super(connection);
-        this.productDao = new ProductDao(connection);
+    public MenuProduto() throws SQLException {
+        this.productDao = new ProductDao(new ConnectionFactory().openConnection());
     }
 
     public void menu() throws SQLException {
@@ -44,7 +44,7 @@ public class MenuProduto extends Menu {
                 excluirProduto();
                 break;
             case 0:
-                (new MenuPrincipal(this.connection)).menu();
+                new MenuPrincipal().menu();
                 break;
         }
     }
@@ -55,7 +55,7 @@ public class MenuProduto extends Menu {
         productDao.deleteById(id);
         System.out.println("Pressione ENTER para voltar ao menu principal...");
         scanner.next();
-        (new MenuPrincipal(this.connection)).menu();
+        new MenuPrincipal().menu();
     }
 
     private void listarProdutoPorId() throws SQLException {
@@ -67,7 +67,7 @@ public class MenuProduto extends Menu {
         }
         System.out.println("Pressione ENTER para voltar ao menu principal...");
         scanner.next();
-        (new MenuPrincipal(this.connection)).menu();
+        new MenuPrincipal().menu();
     }
 
     private void listarProdutos() throws SQLException {
@@ -77,7 +77,7 @@ public class MenuProduto extends Menu {
         }
         System.out.println("Pressione ENTER para voltar ao menu principal...");
         scanner.next();
-        (new MenuPrincipal(this.connection)).menu();
+        new MenuPrincipal().menu();
     }
 
     private void cadastrarProduto() throws SQLException {
@@ -92,6 +92,6 @@ public class MenuProduto extends Menu {
         System.out.println("Produto: " + product.getName() + " - Preço: " + product.getPrice());
         System.out.println("Pressione ENTER para voltar ao menu principal...");
         scanner.next();
-        (new MenuPrincipal(this.connection)).menu();
+        new MenuPrincipal().menu();
     }
 }
